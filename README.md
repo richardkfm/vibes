@@ -11,6 +11,7 @@ working leaner and quieter in long or autonomous sessions.
 | [`lean-output`](.claude/skills/lean-output/SKILL.md) | Keep tool output small: quiet flags, capped output, verbose logs routed to a file and grepped instead of dumped into context. |
 | [`frugal-context`](.claude/skills/frugal-context/SKILL.md) | Search and read the codebase economically — grep before reading, read slices instead of whole files, never re-read what's already in context. |
 | [`checkpoint`](.claude/skills/checkpoint/SKILL.md) | Maintain a compact running state file during long autonomous tasks so context compaction doesn't force expensive re-exploration. |
+| [`radical-compression`](.claude/skills/radical-compression/SKILL.md) | Radically compress after each cycle of work — distill the cycle into a few lines, drop everything else, and keep long sessions tight. |
 | [`repo-map`](.claude/skills/repo-map/SKILL.md) | Build and maintain a cached, annotated map of a big repository so navigating it costs one small read instead of a fresh exploration every session. |
 
 Each skill is a self-contained `SKILL.md` under `.claude/skills/<name>/` and
