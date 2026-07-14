@@ -1,6 +1,10 @@
 # vibes
 
-A small collection of [Claude Code](https://claude.com/claude-code) skills for
+This is a repository for the vibes project.
+
+## Skills
+
+- **github-repo-finder**: A skill to search GitHub for existing repositories with similar concepts to avoid duplication and enable forking or code reuse.
 working leaner and quieter in long or autonomous sessions.
 
 ## Skills
