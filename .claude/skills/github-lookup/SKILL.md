@@ -1,9 +1,9 @@
 ---
-name: reuse-before-build
-description: Before starting a new project or major feature from scratch, search GitHub for existing repos that already solve it, then decide whether to depend on one, fork it, inline pieces of its code, or skip building entirely and contribute upstream instead. Use when the user invokes /reuse-before-build, proposes building a new tool/library/project, or asks whether something already exists for a use case.
+name: github-lookup
+description: Before starting a new project or major feature from scratch, search GitHub for existing repos that already solve it, then decide whether to depend on one, fork it, inline pieces of its code, or skip building entirely and contribute upstream instead. Use when the user invokes /github-lookup, proposes building a new tool/library/project, or asks whether something already exists for a use case.
 ---
 
-# Reuse Before Build
+# GitHub Lookup
 
 Writing a new implementation from scratch spends tokens re-deriving code that
 may already exist, tested and maintained, in a public repo. Before generating
