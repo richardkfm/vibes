@@ -17,6 +17,7 @@ working leaner and quieter in long or autonomous sessions.
 | [`checkpoint`](.claude/skills/checkpoint/SKILL.md) | Maintain a compact running state file during long autonomous tasks so context compaction doesn't force expensive re-exploration. |
 | [`radical-compression`](.claude/skills/radical-compression/SKILL.md) | Radically compress after each cycle of work — distill the cycle into a few lines, drop everything else, and keep long sessions tight. |
 | [`repo-map`](.claude/skills/repo-map/SKILL.md) | Build and maintain a cached, annotated map of a big repository so navigating it costs one small read instead of a fresh exploration every session. |
+| [`github-lookup`](.claude/skills/github-lookup/SKILL.md) | Before building a new project or feature from scratch, search GitHub for existing repos that already solve it, then decide whether to depend on one, fork it, inline some of its code, or contribute upstream instead of building at all. |
 
 Each skill is a self-contained `SKILL.md` under `.claude/skills/<name>/` and
 can be used independently — invoke by name (`/lean-output`) or let Claude
