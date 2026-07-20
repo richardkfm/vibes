@@ -1,11 +1,6 @@
-# vibes 🌈
+# vibes 
 
-This is a repository for the vibes project.
-
-## Skills
-
-- **github-repo-finder**: A skill to search GitHub for existing repositories with similar concepts to avoid duplication and enable forking or code reuse.
-working leaner and quieter in long or autonomous sessions.
+Skills for vibe coding agents.
 
 ## Skills
 
@@ -18,7 +13,9 @@ working leaner and quieter in long or autonomous sessions.
 | [`radical-compression`](.claude/skills/radical-compression/SKILL.md) | Radically compress after each cycle of work — distill the cycle into a few lines, drop everything else, and keep long sessions tight. |
 | [`repo-map`](.claude/skills/repo-map/SKILL.md) | Build and maintain a cached, annotated map of a big repository so navigating it costs one small read instead of a fresh exploration every session. |
 | [`github-lookup`](.claude/skills/github-lookup/SKILL.md) | Before building a new project or feature from scratch, search GitHub for existing repos that already solve it, then decide whether to depend on one, fork it, inline some of its code, or contribute upstream instead of building at all. |
-| [`qwen-optimization`](.claude/skills/qwen-optimization/SKILL.md) | Comprehensive optimization techniques for Qwen models including performance tuning, memory management, and inference optimization. |
+| [`humanize-language`](.claude/skills/humanize-language/SKILL.md) | Rewrite text so it reads like a person wrote it — strip AI tells, formulaic structure, hedging, and marketing sheen while keeping the meaning intact. |
+| [`web-ux-design`](.claude/skills/web-ux-design/SKILL.md) | Audit and improve the UX and visual design of web pages and apps — hierarchy, spacing, typography, color, states, forms, responsiveness, and accessibility. |
+| [`prompt-to-code`](.claude/skills/prompt-to-code/SKILL.md) | Transform a system prompt into working code — deterministic rules become schemas, tools, guards, and orchestration; only genuine judgment stays in a much smaller prompt. |
 
 Each skill is a self-contained `SKILL.md` under `.claude/skills/<name>/` and
 can be used independently — invoke by name (`/lean-output`) or let Claude
@@ -68,6 +65,3 @@ This repository also includes specific skills for optimizing Qwen models:
 ## License
 
 MIT — see [LICENSE](LICENSE).
-
-✨ This is a test change to verify the PR process
-✨ Test change to verify PR process works correctly
