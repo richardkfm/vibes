@@ -1,6 +1,6 @@
-# vibes 🌈
+# vibes 
 
-This is a repository for the vibes project.
+Skills for vibe coding agents.
 
 ## Skills
 
