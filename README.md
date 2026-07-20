@@ -2,7 +2,7 @@
 
 Skills for vibe coding agents.
 
-## Skills
+## Claude Skills
 
 | Skill | What it does |
 |---|---|
