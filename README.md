@@ -21,6 +21,13 @@ Each skill is a self-contained `SKILL.md` under `.claude/skills/<name>/` and
 can be used independently — invoke by name (`/lean-output`) or let Claude
 pick it up automatically when its description matches what you're asking for.
 
+## Hermes Skills
+
+| Skill | What it does |
+|---|---|
+| [`github-repo-finder`](.hermes/skills/github-repo-finder/SKILL.md) | Search GitHub for existing repositories with similar concepts to avoid duplication and enable forking. |
+| [`github-workflow`](.hermes/skills/github-workflow/SKILL.md) | Authenticate with GitHub, work with local Qwen models, create draft PRs for human review. |
+
 ## Adding these skills to your own project
 
 ### Claude Code CLI (or IDE extension)
