@@ -42,7 +42,7 @@ are available to anyone (or any session) working on the project.
 
 To make a skill available across *all* of your projects instead of one repo,
 copy it into `~/.claude/skills/` (your user-level skills directory) rather
-than a project's `.claude/skills/`.
+than a project's `.claude/skills/` directory as above.
 
 ### Claude Code on the web / Cowork
 
@@ -54,6 +54,13 @@ than a project's `.claude/skills/`.
 In both environments, skills show up as slash commands (e.g. `/repo-map`)
 and are also triggered automatically when their description matches the
 task at hand.
+
+## Qwen Optimization Skills
+
+This repository also includes specific skills for optimizing Qwen models:
+
+- `qwen-optimization`: Comprehensive optimization techniques for Qwen models including performance tuning, memory management, and inference optimization.
+- `qwen3-coder`: Qwen3 Coder model optimization and configuration for local development.
 
 ## License
 
