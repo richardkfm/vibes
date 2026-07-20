@@ -2,7 +2,7 @@
 
 Skills for vibe coding agents.
 
-## Skills
+## Claude Skills
 
 | Skill | What it does |
 |---|---|
@@ -20,6 +20,15 @@ Skills for vibe coding agents.
 Each skill is a self-contained `SKILL.md` under `.claude/skills/<name>/` and
 can be used independently — invoke by name (`/lean-output`) or let Claude
 pick it up automatically when its description matches what you're asking for.
+
+## Hermes Skills
+
+| Skill | What it does |
+|---|---|
+| [`github-repo-finder`](.hermes/skills/github-repo-finder/SKILL.md) | Search GitHub for existing repositories with similar concepts to avoid duplication and enable forking. |
+| [`qwen3-coder-local-setup`](.hermes/skills/qwen3-coder-local-setup/SKILL.md) | Local setup and optimization guide for Qwen 3 Coder model. |
+| [`qwen3-performance-optimization`](.hermes/skills/software-development/qwen3-performance-optimization/SKILL.md) | Performance optimization techniques for Qwen 3 Coder 30B with reduced context and speed. |
+| [`qwen3-cache-optimization-demo`](.hermes/skills/qwen3-cache-optimization-demo/SKILL.md) | Demonstrates response caching and prompt optimization techniques for Qwen 3. |
 
 ## Adding these skills to your own project
 
