@@ -26,6 +26,7 @@ pick it up automatically when its description matches what you're asking for.
 | Skill | What it does |
 |---|---|
 | [`github-repo-finder`](.hermes/skills/github-repo-finder/SKILL.md) | Search GitHub for existing repositories with similar concepts to avoid duplication and enable forking. |
+| [`github-workflow`](.hermes/skills/github-workflow/SKILL.md) | Authenticate with GitHub, work with local Qwen models, create draft PRs for human review. |
 
 ## Adding these skills to your own project
 
