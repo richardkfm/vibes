@@ -1,4 +1,4 @@
-# vibes 
+# vibes 🌈
 
 Skills for vibe coding agents.
 
@@ -54,13 +54,6 @@ than a project's `.claude/skills/` directory as above.
 In both environments, skills show up as slash commands (e.g. `/repo-map`)
 and are also triggered automatically when their description matches the
 task at hand.
-
-## Qwen Optimization Skills
-
-This repository also includes specific skills for optimizing Qwen models:
-
-- `qwen-optimization`: Comprehensive optimization techniques for Qwen models including performance tuning, memory management, and inference optimization.
-- `qwen3-coder`: Qwen3 Coder model optimization and configuration for local development.
 
 ## License
 
