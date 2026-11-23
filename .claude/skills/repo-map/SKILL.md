@@ -126,8 +126,8 @@ deep for the map.
 The markdown map is for agent navigation. If the user asks to *see* the
 structure, additionally render a visual from the same data — a Mermaid
 diagram of the top-level modules and their dependencies, or an ASCII tree
-sized by file count. Send it as a file or artifact; don't paste large
-diagrams into chat.
+sized by file count where Mermaid won't render. Send it as a file or
+artifact; don't paste large diagrams into chat.
 
 ## Exception
 
