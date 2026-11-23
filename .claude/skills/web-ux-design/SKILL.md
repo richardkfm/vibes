@@ -1,6 +1,6 @@
 ---
 name: web-ux-design
-description: Audit and improve the UX and visual design of web pages and web apps — hierarchy, spacing, typography, color, states, forms, responsiveness, and accessibility. Use whenever the user asks to make a page or app "look better," "more professional," "cleaner," or "less ugly," asks for a design review or UX feedback, is building any user-facing web UI (landing page, dashboard, form, settings screen), or shares a screenshot/component and wants it improved — even if they never say the words "UX" or "design."
+description: Audits and improves the UX and visual design of web pages and web apps, covering hierarchy, spacing, typography, color, states, forms, responsiveness and accessibility. Use when the user invokes /web-ux-design, asks to make a page or app "look better", "more professional", "cleaner" or "less ugly", asks for a design review or UX feedback, shares a screenshot or component and wants it improved, or whenever the agent builds or changes user-facing web UI (landing page, dashboard, form, settings screen), even if nobody says the words "UX" or "design".
 ---
 
 # Web UX & Design
@@ -118,7 +118,9 @@ on; an exhaustive one gets skimmed.
 **When implementing**: fix in the audit order (hierarchy and spacing before
 color polish), keep changes consistent with the project's existing design
 tokens/framework (Tailwind scale, CSS variables, component library) rather
-than introducing a parallel system, and verify at the three widths above.
+than introducing a parallel system, and verify at the three widths above
+(render the page if a browser or screenshot tool is available; otherwise
+say the check was done by reading the CSS).
 If the project has no spacing/color system at all, introduce a minimal one
 (CSS variables for the scale and palette) as part of the fix — that's what
 prevents the drift from coming back.
@@ -127,3 +129,8 @@ prevents the drift from coming back.
 type scale, one accent plus neutrals — then build screens with it. Design
 the empty/loading/error states at the same time as the happy path, not as
 an afterthought; retrofitting them is where inconsistency creeps in.
+
+## Related skills
+
+- `humanize-language`: for the words on the page (headlines, empty states,
+  error messages, button labels) once the layout is right.

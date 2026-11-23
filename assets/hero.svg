@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="hero-title hero-desc">
+  <title id="hero-title">vibes: skills for coding agents</title>
+  <desc id="hero-desc">The vibes wordmark above the line: Skills for coding agents: lean context, quiet sessions, careful shipping. Beside it a context window fills with gray lines of tool output; each batch is compressed into one short colored line, and the colored lines are folded into one again.</desc>
+
+  <style>
+    /* Palette, shared with skills-flow.svg. */
+    :root {
+      --panel: #f6f4ec;
+      --edge: #dfdbce;
+      --card: #fffefa;
+      --rule: #d2cdbf;
+      --ink: #1b1d22;
+      --ink-2: #4d515a;
+      --raw: #b3ad9d;
+      --red: #d8473f;
+      --orange: #dc6f1c;
+      --yellow: #c9980a;
+      --green: #3a9767;
+      --blue: #3577c5;
+      --violet: #7b5bb6;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --panel: #14171c;
+        --edge: #2b303a;
+        --card: #1c2028;
+        --rule: #363c48;
+        --ink: #f2f0e9;
+        --ink-2: #b3b7c0;
+        --raw: #565e6c;
+        --red: #f0706a;
+        --orange: #f2a253;
+        --yellow: #e8c95a;
+        --green: #66c491;
+        --blue: #66a6ea;
+        --violet: #a58be0;
+      }
+    }
+
+    .panel { fill: var(--panel); stroke: var(--edge); }
+    .card { fill: var(--card); stroke: var(--rule); stroke-width: 1.5; }
+    .wordmark { fill: none; stroke: var(--ink); stroke-width: 22; stroke-linecap: round; stroke-linejoin: round; }
+    .wordmark .dot { fill: var(--ink); stroke: none; }
+    .sub {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 32px;
+      fill: var(--ink-2);
+    }
+    .sub .lead { fill: var(--ink); }
+    .raw { fill: var(--raw); }
+    .red { fill: var(--red); }
+    .orange { fill: var(--orange); }
+    .yellow { fill: var(--yellow); }
+    .green { fill: var(--green); }
+    .blue { fill: var(--blue); }
+    .violet { fill: var(--violet); }
+
+    /*
+      One loop is six work cycles of 6s each. In a cycle seven raw lines arrive,
+      then the batch is squashed into one kept line. At the end of the sixth
+      cycle the kept lines fold back into the first, which is the state the loop
+      started from. The negative delay opens the loop mid-session.
+
+      Without animation the markup below shows the fullest state: six kept
+      lines and seven raw ones. Nothing needs an animation to be visible.
+    */
+    .raw, .squash { animation: 6s linear -15s infinite; }
+    .kept, .shift { animation: 36s linear -15s infinite; }
+    .r0 { animation-name: r0; }
+    .r1 { animation-name: r1; }
+    .r2 { animation-name: r2; }
+    .r3 { animation-name: r3; }
+    .r4 { animation-name: r4; }
+    .r5 { animation-name: r5; }
+    .r6 { animation-name: r6; }
+    .squash { animation-name: squash; }
+    .shift { animation-name: shift; }
+    .k1 { animation-name: k1; }
+    .k2 { animation-name: k2; }
+    .k3 { animation-name: k3; }
+    .k4 { animation-name: k4; }
+    .k5 { animation-name: k5; }
+
+    /* Raw lines arrive one after another. */
+    @keyframes r0 { 0%, 5%  { opacity: 0; transform: scaleX(.6); } 10%, 100% { opacity: 1; transform: none; } }
+    @keyframes r1 { 0%, 14% { opacity: 0; transform: scaleX(.6); } 19%, 100% { opacity: 1; transform: none; } }
+    @keyframes r2 { 0%, 23% { opacity: 0; transform: scaleX(.6); } 28%, 100% { opacity: 1; transform: none; } }
+    @keyframes r3 { 0%, 32% { opacity: 0; transform: scaleX(.6); } 37%, 100% { opacity: 1; transform: none; } }
+    @keyframes r4 { 0%, 41% { opacity: 0; transform: scaleX(.6); } 46%, 100% { opacity: 1; transform: none; } }
+    @keyframes r5 { 0%, 50% { opacity: 0; transform: scaleX(.6); } 55%, 100% { opacity: 1; transform: none; } }
+    @keyframes r6 { 0%, 59% { opacity: 0; transform: scaleX(.6); } 64%, 100% { opacity: 1; transform: none; } }
+
+    /* The batch is squashed toward its top edge and disappears. */
+    @keyframes squash {
+      0%, 76%   { opacity: 1; transform: none; animation-timing-function: cubic-bezier(.6, 0, .4, 1); }
+      87%       { opacity: .9; transform: scaleY(.1); }
+      91%, 100% { opacity: 0; transform: scaleY(.1); }
+    }
+
+    /* The next batch starts one slot lower, below the line that was just kept. */
+    @keyframes shift {
+      0%, 16%        { transform: translateY(14px); }
+      16.01%, 32.66% { transform: translateY(28px); }
+      32.67%, 49.33% { transform: translateY(42px); }
+      49.34%, 66%    { transform: translateY(56px); }
+      66.01%, 82.66% { transform: translateY(70px); }
+      82.67%, 96%    { transform: translateY(84px); animation-timing-function: cubic-bezier(.6, 0, .4, 1); }
+      98.4%, 100%    { transform: translateY(14px); }
+    }
+
+    /* Kept lines: one appears per cycle, all fold into the first at the end. */
+    @keyframes k1 {
+      0%, 14%     { opacity: 0; transform: scaleX(.4); }
+      15.5%, 96%  { opacity: 1; transform: none; animation-timing-function: cubic-bezier(.6, 0, .4, 1); }
+      98.4%, 100% { opacity: 0; transform: translateY(-14px) scaleX(.4); }
+    }
+    @keyframes k2 {
+      0%, 30.67%  { opacity: 0; transform: scaleX(.4); }
+      32.17%, 96% { opacity: 1; transform: none; animation-timing-function: cubic-bezier(.6, 0, .4, 1); }
+      98.4%, 100% { opacity: 0; transform: translateY(-28px) scaleX(.4); }
+    }
+    @keyframes k3 {
+      0%, 47.33%  { opacity: 0; transform: scaleX(.4); }
+      48.83%, 96% { opacity: 1; transform: none; animation-timing-function: cubic-bezier(.6, 0, .4, 1); }
+      98.4%, 100% { opacity: 0; transform: translateY(-42px) scaleX(.4); }
+    }
+    @keyframes k4 {
+      0%, 64%     { opacity: 0; transform: scaleX(.4); }
+      65.5%, 96%  { opacity: 1; transform: none; animation-timing-function: cubic-bezier(.6, 0, .4, 1); }
+      98.4%, 100% { opacity: 0; transform: translateY(-56px) scaleX(.4); }
+    }
+    @keyframes k5 {
+      0%, 80.67%  { opacity: 0; transform: scaleX(.4); }
+      82.17%, 96% { opacity: 1; transform: none; animation-timing-function: cubic-bezier(.6, 0, .4, 1); }
+      98.4%, 100% { opacity: 0; transform: translateY(-70px) scaleX(.4); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+    }
+  </style>
+
+  <rect class="panel" x="0.5" y="0.5" width="1199" height="299" rx="20"/>
+
+  <!-- Wordmark, drawn as round-capped strokes so it looks the same on every platform. -->
+  <g class="wordmark" transform="translate(72 147) scale(0.74)">
+    <path d="M0 -84 L36 0 L72 -84"/>
+    <path d="M110 -84 V0"/>
+    <circle class="dot" cx="110" cy="-126" r="13"/>
+    <path d="M156 -136 V0"/>
+    <circle cx="198" cy="-42" r="42"/>
+    <path d="M286 -42 H370 A42 42 0 1 0 357.7 -12.3"/>
+    <path d="M461.2 -76.5 A29 21 0 1 0 439 -42 A29 21 0 1 1 416.8 -7.5"/>
+  </g>
+
+  <text class="sub" x="64" y="213">
+    <tspan class="lead" x="64">Skills for coding agents:</tspan>
+    <tspan x="64" dy="40">lean context, quiet sessions, careful shipping.</tspan>
+  </text>
+
+  <!-- Context window. Lines sit on a 14px grid of 13 slots. -->
+  <rect class="card" x="876" y="40" width="260" height="220" rx="14"/>
+  <g transform="translate(896 62)">
+    <!-- Kept lines: what each finished cycle was compressed into. -->
+    <rect class="kept red" width="124" height="8" rx="4"/>
+    <g transform="translate(0 14)"><rect class="kept k1 orange" width="84" height="8" rx="4"/></g>
+    <g transform="translate(0 28)"><rect class="kept k2 yellow" width="106" height="8" rx="4"/></g>
+    <g transform="translate(0 42)"><rect class="kept k3 green" width="66" height="8" rx="4"/></g>
+    <g transform="translate(0 56)"><rect class="kept k4 blue" width="116" height="8" rx="4"/></g>
+    <g transform="translate(0 70)"><rect class="kept k5 violet" width="78" height="8" rx="4"/></g>
+
+    <!-- Raw tool output of the current cycle. -->
+    <g class="shift" transform="translate(0 84)">
+      <g class="squash">
+        <rect class="raw r0" y="1" width="220" height="6" rx="3"/>
+        <rect class="raw r1" y="15" width="168" height="6" rx="3"/>
+        <rect class="raw r2" y="29" width="206" height="6" rx="3"/>
+        <rect class="raw r3" y="43" width="144" height="6" rx="3"/>
+        <rect class="raw r4" y="57" width="212" height="6" rx="3"/>
+        <rect class="raw r5" y="71" width="184" height="6" rx="3"/>
+        <rect class="raw r6" y="85" width="112" height="6" rx="3"/>
+      </g>
+    </g>
+  </g>
+</svg>

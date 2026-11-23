@@ -1,6 +1,6 @@
 ---
 name: lean-output
-description: Keep tool output small — every byte a command prints lands in the context window and costs tokens. Use quiet flags, cap long output, and route verbose logs to files that get grepped instead of dumped. Use when the user invokes /lean-output, asks to save tokens, or at the start of any long autonomous run involving builds, tests, or package installs.
+description: Keeps command and tool output small, because every byte a command prints lands in the context window and costs tokens. Prefers quiet flags, caps anything that can scroll, and routes verbose logs to a file that is grepped instead of dumped. Use when the user invokes /lean-output, asks to save tokens or context, complains that output is too long or noisy, or at the start of any long autonomous run involving builds, tests, linters, package installs or CI logs. Also use as soon as a command has flooded the context with output.
 ---
 
 # Lean Output
@@ -13,7 +13,7 @@ Treat every command's stdout/stderr as something you are paying for.
 
 1. **Prefer quiet flags.** Reach for the low-noise form of a command first:
    - `pytest -q` (add `-x` to stop on first failure), not bare `pytest`
-   - `npm test -- --silent`, `npm install --no-audit --no-fund --loglevel=error`
+   - `npm test --silent`, `npm install --no-audit --no-fund --loglevel=error`
    - `pip install --quiet`, `cargo build --quiet`, `mvn -q`, `gradle -q`
    - `git log --oneline -20`, `git diff --stat` before a full `git diff`
    - `yarn --silent`, `pnpm --silent`
@@ -22,7 +22,9 @@ Treat every command's stdout/stderr as something you are paying for.
 2. **Cap anything that can scroll.** If output size is unpredictable, bound it:
    append `| tail -50` (failures usually print last) or `| head -50`
    (listings usually matter first). Never run an uncapped command twice in a
-   row hoping for different output.
+   row hoping for different output. A pipeline exits with `tail`'s status,
+   not the command's, so a failing build piped to `tail` looks green: when
+   pass/fail matters, use the log-file form below or `set -o pipefail`.
 
 3. **Big logs go to a file, not the context.** For builds, test suites, and
    servers, redirect to the scratchpad and inspect selectively:
@@ -60,12 +62,12 @@ pytest -q -x --tb=short                    # quiet, stop first fail, short trace
 mypy . 2>&1 | tail -30                     # last errors only
 ruff check --output-format=concise .       # concise lint output
 black --check --diff . 2>&1 | head -20     # formatting diff, capped
-pylint --reports=n src/ 2>&1 | tail -40    # no summary reports
+pylint --score=n src/ 2>&1 | tail -40      # messages only, no score footer
 
 # JavaScript/TypeScript
 tsc --noEmit 2>&1 | tail -20              # compile check, last errors only
-eslint --format=compact . 2>&1 | tail -20 # compact lint output
-npx vitest run --reporter=basic           # basic test report
+eslint --quiet . 2>&1 | tail -20          # errors only, warnings dropped
+npx vitest run --reporter=dot             # one dot per test, failures in full
 npx jest --silent                         # jest silent mode
 npm ci --no-audit --no-fund --loglevel=error  # silent install
 
@@ -80,24 +82,26 @@ go test ./... -count=1 2>&1 | tail -30    # tests, bypass cache
 staticcheck ./... 2>&1 | tail -20        # deeper lints, capped
 
 # Infrastructure & ops
-terraform plan -no-color -detailed-exitcode 2>&1 | tail -40
+terraform plan -no-color -detailed-exitcode > /tmp/plan.log 2>&1; echo "exit=$?"  # 0 none, 1 error, 2 changes
 kubectl get pods -o name                   # names only, no table
 docker ps --format '{{.Names}}'            # container names only
 helm list --short                          # release names only
+gh run view <run-id> --log-failed > /tmp/ci.log 2>&1   # CI: failed steps only, then grep
 ```
 
-## What NOT to do
+## Habits that waste context
 
-- Do not `cat` a file to "show" it when nothing needs showing.
-- Do not re-run a failing suite in verbose mode when the quiet failure
-  message already names the broken test — run just that test with its
+- `cat`-ing a file to "show" it when nothing needs showing.
+- Re-running a failing suite in verbose mode when the quiet failure
+  message already names the broken test. Run just that test with its
   full path: `pytest tests/api/test_auth.py::test_login`
-- Do not paste long output back to the user; summarize the finding and cite
+- Pasting long output back to the user. Summarize the finding and cite
   the file/line.
-- Do not run `ls -la` on large directories — use `ls` or glob for specific
+- `ls -la` on large directories. Use `ls` or glob for the specific
   files you need.
-- Do not `print(os.environ)` to "see what variables are set"; use
-  `env | grep -i prefix` for targeted lookup.
+- `print(os.environ)` or bare `env` to "see what variables are set". Use
+  `env | grep -i prefix` for targeted lookup; a full dump also pulls
+  secrets into the transcript.
 
 ## Exception
 
@@ -105,9 +109,13 @@ Correctness beats thrift: if capped output hides the actual error, widen the
 window (bigger `tail`, targeted `grep -B/-A`) until you can see it. Saving
 tokens on a wrong answer saves nothing.
 
-## Combining with other skills
+## Related skills
 
-- **frugal-context**: grep before reading so you only feed relevant sections
-  into context.
-- **checkpoint**: record which quiet flags work for this project so you
+- `frugal-context`: the same thrift for reading files. Grep before reading
+  so you only feed relevant sections into context.
+- `checkpoint`: record which quiet flags work for this project so you
   don't have to rediscover them after context compaction.
+- `radical-compression`: carries a log's path across cycles instead of its
+  contents, so keep the log file where it can be grepped again.
+- `github-actions`: when the long log is a CI run and the fix belongs in
+  the workflow itself.

@@ -1,0 +1,215 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="570" viewBox="0 0 1200 570" role="img" aria-labelledby="flow-title flow-desc">
+  <title id="flow-title">How the vibes skills fit into one long agent session</title>
+  <desc id="flow-desc">A timeline read left to right. Before building: github-lookup searches GitHub for an existing solution. Getting oriented: repo-map and frugal-context. Working in cycles: lean-output, radical-compression and checkpoint form a loop; context fills during a cycle and drops when the cycle is compressed. Shipping: github-actions for CI, github-docs for the README and PR, github-releases for the tag and release, linear-issues for a comment on the issue. silent-mode spans the whole session. humanize-language, web-ux-design and prompt-to-code are used on demand.</desc>
+
+  <style>
+    /* Palette, shared with hero.svg. */
+    :root {
+      --panel: #f6f4ec;
+      --edge: #dfdbce;
+      --card: #fffefa;
+      --rule: #d2cdbf;
+      --ink: #1b1d22;
+      --ink-2: #4d515a;
+      --raw: #b3ad9d;
+      --red: #d8473f;
+      --orange: #dc6f1c;
+      --yellow: #c9980a;
+      --green: #3a9767;
+      --blue: #3577c5;
+      --violet: #7b5bb6;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --panel: #14171c;
+        --edge: #2b303a;
+        --card: #1c2028;
+        --rule: #363c48;
+        --ink: #f2f0e9;
+        --ink-2: #b3b7c0;
+        --raw: #565e6c;
+        --red: #f0706a;
+        --orange: #f2a253;
+        --yellow: #e8c95a;
+        --green: #66c491;
+        --blue: #66a6ea;
+        --violet: #a58be0;
+      }
+    }
+
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .name { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 20px; font-weight: 600; fill: var(--ink); }
+    .gloss { font-size: 15px; fill: var(--ink-2); }
+    .stage { font-size: 18px; font-weight: 600; fill: var(--ink); }
+    .mid { text-anchor: middle; }
+    .end { text-anchor: end; }
+
+    .panel { fill: var(--panel); stroke: var(--edge); }
+    .card { fill: var(--card); stroke: var(--rule); stroke-width: 1.5; }
+    .span { fill: none; stroke: var(--violet); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .seg { fill: none; stroke: currentColor; stroke-width: 4; }
+    .tip { fill: currentColor; }
+    .node { fill: currentColor; stroke: var(--panel); stroke-width: 3; }
+    .red { color: var(--red); }
+    .orange { color: var(--orange); }
+    .green { color: var(--green); }
+    .blue { color: var(--blue); }
+
+    .track { fill: none; stroke: var(--green); stroke-width: 2.5; }
+    .way { fill: var(--green); }
+    .runner { fill: none; stroke: var(--ink); stroke-width: 12; stroke-linecap: round; stroke-dasharray: 0.1 1214.9; stroke-dashoffset: 367.2; }
+    .limit { stroke: var(--ink-2); stroke-width: 1.5; stroke-linecap: round; stroke-dasharray: 2 6; }
+    .floor { stroke: var(--rule); stroke-width: 1.5; }
+    .saw { fill: none; stroke: var(--green); stroke-width: 2.5; stroke-linejoin: round; }
+    .now { fill: var(--ink); stroke: var(--panel); stroke-width: 2; }
+
+    .quiet { fill: none; stroke: var(--rule); stroke-width: 1.5; stroke-dasharray: 4 4; }
+    .quiet-name { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 17px; fill: var(--ink-2); text-anchor: middle; }
+    .quiet-label { font-size: 16px; font-weight: 600; fill: var(--ink-2); }
+
+    /*
+      One work cycle takes 9s. The runner circles the loop once (the dash
+      pattern is 1215 long, the loop 1214.8) while the context line scrolls
+      left by one tooth (86), so the line drops as the runner passes
+      radical-compression. Each loop card is outlined while the runner is
+      under it. Without animation everything rests at the first frame.
+    */
+    .runner, .saw, .now, .at-compress, .at-checkpoint, .at-output { animation: 9s linear infinite; }
+    .runner { animation-name: run; }
+    .saw { animation-name: scroll; }
+    .now { animation-name: level; }
+    .at-compress { animation-name: at-compress; }
+    .at-checkpoint { animation-name: at-checkpoint; }
+    .at-output { animation-name: at-output; }
+
+    @keyframes run {
+      from { stroke-dashoffset: 367.2; }
+      to   { stroke-dashoffset: -847.8; }
+    }
+    @keyframes scroll {
+      from { transform: none; }
+      to   { transform: translateX(-86px); }
+    }
+    @keyframes level {
+      0%, 100% { transform: none; }
+      23.26%   { transform: translateY(-19px); }
+      37.21%   { transform: translateY(51px); }
+    }
+    @keyframes at-compress {
+      0%, 17.5%   { stroke: var(--rule); stroke-width: 1.5; }
+      21%, 39%    { stroke: var(--green); stroke-width: 2.5; }
+      42.5%, 100% { stroke: var(--rule); stroke-width: 1.5; }
+    }
+    @keyframes at-checkpoint {
+      0%, 64.5%   { stroke: var(--rule); stroke-width: 1.5; }
+      68%, 77%    { stroke: var(--green); stroke-width: 2.5; }
+      80.5%, 100% { stroke: var(--rule); stroke-width: 1.5; }
+    }
+    @keyframes at-output {
+      0%, 79%     { stroke: var(--rule); stroke-width: 1.5; }
+      82.5%, 92%  { stroke: var(--green); stroke-width: 2.5; }
+      95.5%, 100% { stroke: var(--rule); stroke-width: 1.5; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+    }
+  </style>
+
+  <defs>
+    <clipPath id="flow-chart">
+      <rect x="536" y="282" width="344" height="86"/>
+    </clipPath>
+  </defs>
+
+  <rect class="panel" x="0.5" y="0.5" width="1199" height="569" rx="20"/>
+
+  <!-- silent-mode spans the whole session. -->
+  <text x="40" y="58">
+    <tspan class="name">silent-mode</tspan>
+    <tspan class="gloss" dx="10">no narration, one summary</tspan>
+  </text>
+  <text class="gloss end" x="1160" y="58">spans the whole session</text>
+  <path class="span" d="M40 88 V76 H1160 V88"/>
+
+  <!-- Session timeline: four stages, left to right. -->
+  <path class="seg red" d="M47 110 H276"/>
+  <path class="seg orange" d="M276 110 H515"/>
+  <path class="seg green" d="M515 110 H955"/>
+  <path class="seg blue" d="M955 110 H1146"/>
+  <path class="tip blue" d="M1144 102 L1160 110 L1144 118 Z"/>
+  <circle class="node red" cx="47" cy="110" r="7"/>
+  <circle class="node orange" cx="276" cy="110" r="7"/>
+  <circle class="node green" cx="515" cy="110" r="7"/>
+  <circle class="node blue" cx="955" cy="110" r="7"/>
+  <text class="stage" x="40" y="144">Before building</text>
+  <text class="stage" x="269" y="144">Getting oriented</text>
+  <text class="stage" x="508" y="144">Working in cycles</text>
+  <text class="stage" x="948" y="144">Shipping</text>
+
+  <!-- Stage 1: before building. -->
+  <rect class="card" x="40" y="168" width="190" height="64" rx="8"/>
+  <text class="name" x="54" y="195">github-lookup</text>
+  <text class="gloss" x="54" y="216">search GitHub first</text>
+
+  <!-- Stage 2: getting oriented. -->
+  <rect class="card" x="269" y="168" width="200" height="64" rx="8"/>
+  <text class="name" x="283" y="195">repo-map</text>
+  <text class="gloss" x="283" y="216">cached repo overview</text>
+  <rect class="card" x="269" y="244" width="200" height="64" rx="8"/>
+  <text class="name" x="283" y="271">frugal-context</text>
+  <text class="gloss" x="283" y="292">grep first, read slices</text>
+
+  <!-- Stage 3: the work loop, drawn clockwise from the middle of its bottom edge.
+       The runner is a second copy of the loop with a single round dash; it passes under the cards. -->
+  <path class="track" d="M708 428 H532 A24 24 0 0 1 508 404 V224 A24 24 0 0 1 532 200 H884 A24 24 0 0 1 908 224 V404 A24 24 0 0 1 884 428 Z"/>
+  <path class="way" d="M698 194 L708 200 L698 206 Z"/>
+  <path class="way" d="M902 309 L908 319 L914 309 Z"/>
+  <path class="way" d="M502 319 L508 309 L514 319 Z"/>
+  <path class="runner" d="M708 428 H532 A24 24 0 0 1 508 404 V224 A24 24 0 0 1 532 200 H884 A24 24 0 0 1 908 224 V404 A24 24 0 0 1 884 428 Z"/>
+
+  <rect class="card at-checkpoint" x="541" y="168" width="150" height="64" rx="8"/>
+  <text class="name mid" x="616" y="195">checkpoint</text>
+  <text class="gloss mid" x="616" y="216">save state</text>
+
+  <rect class="card at-output" x="715" y="168" width="160" height="64" rx="8"/>
+  <text class="name mid" x="795" y="195">lean-output</text>
+  <text class="gloss mid" x="795" y="216">quiet tool output</text>
+
+  <rect class="card at-compress" x="578" y="396" width="260" height="64" rx="8"/>
+  <text class="name mid" x="708" y="423">radical-compression</text>
+  <text class="gloss mid" x="708" y="444">distill each cycle</text>
+
+  <!-- Context used over time: fills during a cycle, drops when it is compressed. -->
+  <text class="gloss" x="536" y="265">context used</text>
+  <text class="gloss end" x="880" y="265">limit</text>
+  <path class="limit" d="M536 277 H880"/>
+  <path class="floor" d="M536 373 H880"/>
+  <g clip-path="url(#flow-chart)">
+    <polyline class="saw" points="482,363 556,293 568,363 642,293 654,363 728,293 740,363 814,293 826,363 900,293 912,363 986,293 998,363"/>
+  </g>
+  <circle class="now" cx="880" cy="312" r="5.5"/>
+
+  <!-- Stage 4: shipping. -->
+  <rect class="card" x="948" y="168" width="212" height="64" rx="8"/>
+  <text class="name" x="962" y="195">github-actions</text>
+  <text class="gloss" x="962" y="216">CI</text>
+  <rect class="card" x="948" y="244" width="212" height="64" rx="8"/>
+  <text class="name" x="962" y="271">github-docs</text>
+  <text class="gloss" x="962" y="292">README and PR</text>
+  <rect class="card" x="948" y="320" width="212" height="64" rx="8"/>
+  <text class="name" x="962" y="347">github-releases</text>
+  <text class="gloss" x="962" y="368">tag and release</text>
+  <rect class="card" x="948" y="396" width="212" height="64" rx="8"/>
+  <text class="name" x="962" y="423">linear-issues</text>
+  <text class="gloss" x="962" y="444">comment on the issue</text>
+
+  <!-- Used on demand, at any point. -->
+  <text class="quiet-label" x="40" y="522">On demand</text>
+  <rect class="quiet" x="170" y="496" width="206" height="40" rx="8"/>
+  <text class="quiet-name" x="273" y="522">humanize-language</text>
+  <rect class="quiet" x="388" y="496" width="164" height="40" rx="8"/>
+  <text class="quiet-name" x="470" y="522">web-ux-design</text>
+  <rect class="quiet" x="564" y="496" width="174" height="40" rx="8"/>
+  <text class="quiet-name" x="651" y="522">prompt-to-code</text>
+</svg>

@@ -1,6 +1,6 @@
 ---
 name: repo-map
-description: Build and maintain a compact cached map of the repository — an annotated tree with module one-liners, entry points, and conventions — so navigating a big codebase costs one small read instead of a fresh exploration every session. Use when the user invokes /repo-map, asks for a visualization or overview of the repo structure, or at the start of work in a large unfamiliar repository.
+description: Builds and maintains a compact cached map of the repository (an annotated tree with module one-liners, entry points, and conventions, kept in .repo-map.md) so navigating a big codebase costs one small read instead of a fresh exploration every session. Use when the user invokes /repo-map, asks for a map, overview, tour or visualization of the repo structure or how the codebase is organized, or at the start of work in a large unfamiliar repository. Also use whenever a .repo-map.md already exists, reading it before any other exploration.
 ---
 
 # Repo Map
@@ -14,14 +14,15 @@ without touching the tree.
 ## Using an existing map
 
 Before exploring any repository, check for `.repo-map.md` at the repo root.
-If it exists, read it FIRST and treat it as the primary index: navigate
+If it exists, read it first and treat it as the primary index: navigate
 straight to the directories/files it names instead of running discovery
 listings and greps. Fall back to live exploration only for areas the map
 doesn't cover — and add what you learn to the map afterwards.
 
 Trust but verify freshness: the map header records the commit it was built
-at. If `git log --oneline <that-sha>..HEAD -- <dir> | head -5` shows
-heavy churn in the area you care about, re-check that area live.
+at. If `git rev-list --count <that-sha>..HEAD -- <dir>` reports more than
+a handful of commits in the area you care about, re-check that area live.
+Do the same if git doesn't know the sha (shallow clone, rewritten history).
 
 ## Building the map
 
@@ -32,14 +33,15 @@ Generate the skeleton cheaply from git metadata, not by reading files:
 git ls-files | cut -d/ -f1-2 | sort | uniq -c | sort -rn | head -40
 
 # Likely entry points and manifests
-git ls-files | grep -E '(main|index|app|cli)\.[a-z]+$|package\.json$|pyproject\.toml$|Cargo\.toml$|go\.mod$'
+git ls-files | grep -E '(^|/)((main|index|app|cli)\.[a-z]+|package\.json|pyproject\.toml|Cargo\.toml|go\.mod)$' | head -40
 
 # File count by extension
-git ls-files | grep -oE '\.[a-z]+$' | sort | uniq -c | sort -rn
+git ls-files | grep -oE '\.[A-Za-z0-9]+$' | sort | uniq -c | sort -rn | head -15
 ```
 
-Then read ONLY the manifests and any top-level README to annotate. Write
-`.repo-map.md` (~100 lines max, hard cap 150):
+Then read only the manifests and any top-level README to annotate; the
+rest of the map comes from paths, not file contents. Write `.repo-map.md`
+(~100 lines max, hard cap 150):
 
 ```markdown
 # Repo map — built at a3f8d2c, 2026-08-16
@@ -79,7 +81,12 @@ deep for the map.
   than no map.
 
 - Commit the map with whatever change prompted the update; update the
-  header sha. Don't rebuild wholesale unless the structure really shifted.
+  header sha (`git rev-parse --short HEAD`). Don't rebuild wholesale unless
+  the structure really shifted.
+
+- If the repo isn't the user's to add files to (an upstream project, a team
+  that keeps tooling files out of the tree), keep the map untracked instead:
+  `echo .repo-map.md >> "$(git rev-parse --git-path info/exclude)"`.
 
 - Never let it grow into documentation. It's an index; prune as you add.
 
@@ -89,7 +96,7 @@ deep for the map.
 ```markdown
 ## Workspaces
 - packages/auth/ — shared auth middleware (npm, used by apps/*)
-- packages/ui/ — component library (Storybook storybook in /stories)
+- packages/ui/ — component library (Storybook stories in stories/)
 - apps/web/ — customer-facing SPA (Next.js)
 - apps/admin/ — internal dashboard (Next.js, same UI pkg)
 ```
@@ -119,8 +126,8 @@ deep for the map.
 The markdown map is for agent navigation. If the user asks to *see* the
 structure, additionally render a visual from the same data — a Mermaid
 diagram of the top-level modules and their dependencies, or an ASCII tree
-sized by file count. Send it as a file or artifact; don't paste large
-diagrams into chat.
+sized by file count where Mermaid won't render. Send it as a file or
+artifact; don't paste large diagrams into chat.
 
 ## Exception
 
@@ -128,11 +135,13 @@ The map is a hint, not ground truth. Any change you make still gets
 verified against the real code — if the map and the code disagree, the code
 wins and the map gets corrected.
 
-## Combining with other skills
+## Related skills
 
-- **frugal-context**: use the map to jump to the right directory before
+- `frugal-context`: use the map to jump to the right directory before
   searching within it — skip the "find the directory" step entirely.
-- **checkpoint**: store the map path and sha in your state file so you can
+- `checkpoint`: store the map path and sha in your state file so you can
   verify freshness without reading the map every cycle.
-- **lean-output**: build the map using git metadata (file paths only),
+- `lean-output`: build the map using git metadata (file paths only),
   never the verbose content of the files it references.
+- `github-docs`: the map is an index for agents. Structure that people
+  need explained belongs in the README, which that skill covers.
