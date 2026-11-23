@@ -11,11 +11,11 @@
       --rule: #d2cdbf;
       --ink: #1b1d22;
       --ink-2: #4d515a;
-      --raw: #c8c3b5;
+      --raw: #b3ad9d;
       --red: #d8473f;
-      --orange: #e5822b;
-      --yellow: #d4a514;
-      --green: #3e9c6c;
+      --orange: #dc6f1c;
+      --yellow: #c9980a;
+      --green: #3a9767;
       --blue: #3577c5;
       --violet: #7b5bb6;
     }
@@ -27,7 +27,7 @@
         --rule: #363c48;
         --ink: #f2f0e9;
         --ink-2: #b3b7c0;
-        --raw: #4a515e;
+        --raw: #565e6c;
         --red: #f0706a;
         --orange: #f2a253;
         --yellow: #e8c95a;
@@ -68,21 +68,23 @@
     .quiet-label { font-size: 16px; font-weight: 600; fill: var(--ink-2); }
 
     /*
-      One work cycle takes 9s. The runner circles the loop once (its path is
-      1214.8 long) while the context line scrolls left by one tooth (86), so
-      the line drops as the runner passes radical-compression. Each loop card
-      is outlined while the runner is under it.
+      One work cycle takes 9s. The runner circles the loop once (the dash
+      pattern is 1215 long, the loop 1214.8) while the context line scrolls
+      left by one tooth (86), so the line drops as the runner passes
+      radical-compression. Each loop card is outlined while the runner is
+      under it. Without animation everything rests at the first frame.
     */
-    .runner { animation: run 9s linear infinite; }
-    .saw { animation: scroll 9s linear infinite; }
-    .now { animation: level 9s linear infinite; }
-    .at-compress { animation: at-compress 9s linear infinite; }
-    .at-checkpoint { animation: at-checkpoint 9s linear infinite; }
-    .at-output { animation: at-output 9s linear infinite; }
+    .runner, .saw, .now, .at-compress, .at-checkpoint, .at-output { animation: 9s linear infinite; }
+    .runner { animation-name: run; }
+    .saw { animation-name: scroll; }
+    .now { animation-name: level; }
+    .at-compress { animation-name: at-compress; }
+    .at-checkpoint { animation-name: at-checkpoint; }
+    .at-output { animation-name: at-output; }
 
     @keyframes run {
       from { stroke-dashoffset: 367.2; }
-      to   { stroke-dashoffset: -847.6; }
+      to   { stroke-dashoffset: -847.8; }
     }
     @keyframes scroll {
       from { transform: none; }
@@ -115,8 +117,6 @@
   </style>
 
   <defs>
-    <!-- The work loop, drawn clockwise from the middle of its bottom edge. -->
-    <path id="flow-loop" d="M708 428 H532 A24 24 0 0 1 508 404 V224 A24 24 0 0 1 532 200 H884 A24 24 0 0 1 908 224 V404 A24 24 0 0 1 884 428 Z"/>
     <clipPath id="flow-chart">
       <rect x="536" y="282" width="344" height="86"/>
     </clipPath>
@@ -160,12 +160,13 @@
   <text class="name" x="283" y="271">frugal-context</text>
   <text class="gloss" x="283" y="292">grep first, read slices</text>
 
-  <!-- Stage 3: the work loop. The runner passes under the cards. -->
-  <use class="track" href="#flow-loop"/>
+  <!-- Stage 3: the work loop, drawn clockwise from the middle of its bottom edge.
+       The runner is a second copy of the loop with a single round dash; it passes under the cards. -->
+  <path class="track" d="M708 428 H532 A24 24 0 0 1 508 404 V224 A24 24 0 0 1 532 200 H884 A24 24 0 0 1 908 224 V404 A24 24 0 0 1 884 428 Z"/>
   <path class="way" d="M698 194 L708 200 L698 206 Z"/>
   <path class="way" d="M902 309 L908 319 L914 309 Z"/>
   <path class="way" d="M502 319 L508 309 L514 319 Z"/>
-  <use class="runner" href="#flow-loop"/>
+  <path class="runner" d="M708 428 H532 A24 24 0 0 1 508 404 V224 A24 24 0 0 1 532 200 H884 A24 24 0 0 1 908 224 V404 A24 24 0 0 1 884 428 Z"/>
 
   <rect class="card at-checkpoint" x="541" y="168" width="150" height="64" rx="8"/>
   <text class="name mid" x="616" y="195">checkpoint</text>
@@ -180,7 +181,8 @@
   <text class="gloss mid" x="708" y="444">distill each cycle</text>
 
   <!-- Context used over time: fills during a cycle, drops when it is compressed. -->
-  <text class="gloss" x="536" y="265">context window</text>
+  <text class="gloss" x="536" y="265">context used</text>
+  <text class="gloss end" x="880" y="265">limit</text>
   <path class="limit" d="M536 277 H880"/>
   <path class="floor" d="M536 373 H880"/>
   <g clip-path="url(#flow-chart)">
@@ -204,10 +206,10 @@
 
   <!-- Used on demand, at any point. -->
   <text class="quiet-label" x="40" y="522">On demand</text>
-  <rect class="quiet" x="148" y="496" width="206" height="40" rx="8"/>
-  <text class="quiet-name" x="251" y="522">humanize-language</text>
-  <rect class="quiet" x="366" y="496" width="164" height="40" rx="8"/>
-  <text class="quiet-name" x="448" y="522">web-ux-design</text>
-  <rect class="quiet" x="542" y="496" width="174" height="40" rx="8"/>
-  <text class="quiet-name" x="629" y="522">prompt-to-code</text>
+  <rect class="quiet" x="170" y="496" width="206" height="40" rx="8"/>
+  <text class="quiet-name" x="273" y="522">humanize-language</text>
+  <rect class="quiet" x="388" y="496" width="164" height="40" rx="8"/>
+  <text class="quiet-name" x="470" y="522">web-ux-design</text>
+  <rect class="quiet" x="564" y="496" width="174" height="40" rx="8"/>
+  <text class="quiet-name" x="651" y="522">prompt-to-code</text>
 </svg>

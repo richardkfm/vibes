@@ -11,11 +11,11 @@
       --rule: #d2cdbf;
       --ink: #1b1d22;
       --ink-2: #4d515a;
-      --raw: #c8c3b5;
+      --raw: #b3ad9d;
       --red: #d8473f;
-      --orange: #e5822b;
-      --yellow: #d4a514;
-      --green: #3e9c6c;
+      --orange: #dc6f1c;
+      --yellow: #c9980a;
+      --green: #3a9767;
       --blue: #3577c5;
       --violet: #7b5bb6;
     }
@@ -27,7 +27,7 @@
         --rule: #363c48;
         --ink: #f2f0e9;
         --ink-2: #b3b7c0;
-        --raw: #4a515e;
+        --raw: #565e6c;
         --red: #f0706a;
         --orange: #f2a253;
         --yellow: #e8c95a;
@@ -56,25 +56,30 @@
     .violet { fill: var(--violet); }
 
     /*
-      One loop is six work cycles of 6s. In each cycle seven raw lines arrive,
+      One loop is six work cycles of 6s each. In a cycle seven raw lines arrive,
       then the batch is squashed into one kept line. At the end of the sixth
-      cycle the kept lines fold back into the first, which is where the loop
-      started. The negative delay opens the loop mid-session.
+      cycle the kept lines fold back into the first, which is the state the loop
+      started from. The negative delay opens the loop mid-session.
+
+      Without animation the markup below shows the fullest state: six kept
+      lines and seven raw ones. Nothing needs an animation to be visible.
     */
-    .r0 { animation: r0 6s linear -15s infinite; }
-    .r1 { animation: r1 6s linear -15s infinite; }
-    .r2 { animation: r2 6s linear -15s infinite; }
-    .r3 { animation: r3 6s linear -15s infinite; }
-    .r4 { animation: r4 6s linear -15s infinite; }
-    .r5 { animation: r5 6s linear -15s infinite; }
-    .r6 { animation: r6 6s linear -15s infinite; }
-    .squash { animation: squash 6s linear -15s infinite; }
-    .shift { animation: shift 36s linear -15s infinite; }
-    .k1 { animation: k1 36s linear -15s infinite; }
-    .k2 { animation: k2 36s linear -15s infinite; }
-    .k3 { animation: k3 36s linear -15s infinite; }
-    .k4 { animation: k4 36s linear -15s infinite; }
-    .k5 { animation: k5 36s linear -15s infinite; }
+    .raw, .squash { animation: 6s linear -15s infinite; }
+    .kept, .shift { animation: 36s linear -15s infinite; }
+    .r0 { animation-name: r0; }
+    .r1 { animation-name: r1; }
+    .r2 { animation-name: r2; }
+    .r3 { animation-name: r3; }
+    .r4 { animation-name: r4; }
+    .r5 { animation-name: r5; }
+    .r6 { animation-name: r6; }
+    .squash { animation-name: squash; }
+    .shift { animation-name: shift; }
+    .k1 { animation-name: k1; }
+    .k2 { animation-name: k2; }
+    .k3 { animation-name: k3; }
+    .k4 { animation-name: k4; }
+    .k5 { animation-name: k5; }
 
     /* Raw lines arrive one after another. */
     @keyframes r0 { 0%, 5%  { opacity: 0; transform: scaleX(.6); } 10%, 100% { opacity: 1; transform: none; } }
@@ -145,7 +150,7 @@
     <path d="M156 -136 V0"/>
     <circle cx="198" cy="-42" r="42"/>
     <path d="M286 -42 H370 A42 42 0 1 0 357.7 -12.3"/>
-    <path d="M455.9 -76.5 A26 21 0 1 0 436 -42 A26 21 0 1 1 416.1 -7.5"/>
+    <path d="M461.2 -76.5 A29 21 0 1 0 439 -42 A29 21 0 1 1 416.8 -7.5"/>
   </g>
 
   <text class="sub" x="64" y="213">
@@ -157,12 +162,12 @@
   <rect class="card" x="876" y="40" width="260" height="220" rx="14"/>
   <g transform="translate(896 62)">
     <!-- Kept lines: what each finished cycle was compressed into. -->
-    <rect class="red" width="124" height="8" rx="4"/>
-    <g transform="translate(0 14)"><rect class="orange k1" width="84" height="8" rx="4"/></g>
-    <g transform="translate(0 28)"><rect class="yellow k2" width="106" height="8" rx="4"/></g>
-    <g transform="translate(0 42)"><rect class="green k3" width="66" height="8" rx="4"/></g>
-    <g transform="translate(0 56)"><rect class="blue k4" width="116" height="8" rx="4"/></g>
-    <g transform="translate(0 70)"><rect class="violet k5" width="78" height="8" rx="4"/></g>
+    <rect class="kept red" width="124" height="8" rx="4"/>
+    <g transform="translate(0 14)"><rect class="kept k1 orange" width="84" height="8" rx="4"/></g>
+    <g transform="translate(0 28)"><rect class="kept k2 yellow" width="106" height="8" rx="4"/></g>
+    <g transform="translate(0 42)"><rect class="kept k3 green" width="66" height="8" rx="4"/></g>
+    <g transform="translate(0 56)"><rect class="kept k4 blue" width="116" height="8" rx="4"/></g>
+    <g transform="translate(0 70)"><rect class="kept k5 violet" width="78" height="8" rx="4"/></g>
 
     <!-- Raw tool output of the current cycle. -->
     <g class="shift" transform="translate(0 84)">
