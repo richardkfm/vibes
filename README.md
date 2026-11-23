@@ -121,11 +121,13 @@ To publish a release, tag a commit on `main` and push the tag:
 
 ```bash
 git switch main && git pull
-git tag -a v1.0.0 -m "v1.0.0"
-git push origin v1.0.0
+git tag -a v0.1.0 -m "v0.1.0"
+git push origin v0.1.0
 ```
 
-The release workflow validates the skills, zips each one, and publishes a GitHub release with generated notes. A tag with a suffix, such as `v1.1.0-rc.1`, is published as a pre-release.
+The release workflow validates the skills, refuses a tag that is not on `main`, zips each skill, and publishes a GitHub release with generated notes. Edit the notes afterwards if the list of merged pull requests needs a summary on top. A tag with a suffix, such as `v0.1.0-rc.1`, is published as a pre-release.
+
+The workflows pin every action to a commit SHA; Dependabot opens a pull request when a newer version is out.
 
 ## License
 

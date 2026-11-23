@@ -1,0 +1,8 @@
+# The workflows pin every action to a commit SHA. A pin never updates itself,
+# so Dependabot proposes the bumps (SHA and version comment together).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

@@ -2,9 +2,16 @@
 """Generate the Hermes copies of skills that live in both trees.
 
 .claude/skills/<name>/ is the source of truth. For every skill listed in
-MIRRORS this writes .hermes/skills/<category>/<name>/ with the same body and
-bundled files, and a Hermes-style frontmatter block. Never edit the Hermes
-copy by hand: edit the source and re-run this script.
+MIRRORS this writes .hermes/skills/<category>/<name>/ with the same
+instructions and bundled files in the shape Hermes expects:
+
+- a short description, because the Hermes skill index shows only the first
+  60 characters;
+- a "When to Use" section, which Hermes's skill linter looks for, filled from
+  the trigger part of the source description;
+- Hermes frontmatter (version, author, license, metadata.hermes).
+
+Never edit a Hermes copy by hand: edit the source and re-run this script.
 
 Usage:
   python3 scripts/sync_hermes_skills.py          # write the copies
@@ -24,13 +31,32 @@ ROOT = Path(__file__).resolve().parent.parent
 CLAUDE_DIR = ROOT / ".claude" / "skills"
 HERMES_DIR = ROOT / ".hermes" / "skills"
 
-# Skills mirrored into the Hermes tree: Hermes category folder and tags.
+# Skills mirrored into the Hermes tree: category folder, index description
+# (at most HERMES_MAX_DESCRIPTION characters, ending in a period) and tags.
 MIRRORS: dict[str, dict] = {
-    "github-actions": {"category": "github", "tags": ["GitHub", "Actions", "CI", "Workflows"]},
-    "github-releases": {"category": "github", "tags": ["GitHub", "Releases", "Tags", "Versioning"]},
-    "github-docs": {"category": "github", "tags": ["GitHub", "Documentation", "README", "Pull Requests"]},
-    "linear-issues": {"category": "productivity", "tags": ["Linear", "Issues", "Comments", "Project Management"]},
+    "github-actions": {
+        "category": "github",
+        "description": "Use when writing, changing or debugging CI workflows.",
+        "tags": ["GitHub", "Actions", "CI", "Workflows"],
+    },
+    "github-releases": {
+        "category": "github",
+        "description": "Use when tagging a version or publishing a release.",
+        "tags": ["GitHub", "Releases", "Tags", "Versioning"],
+    },
+    "github-docs": {
+        "category": "github",
+        "description": "Use when opening a PR or changing documented behavior.",
+        "tags": ["GitHub", "Documentation", "README", "Pull Requests"],
+    },
+    "linear-issues": {
+        "category": "productivity",
+        "description": "Use for any Linear issue work. Marks agent comments.",
+        "tags": ["Linear", "Issues", "Comments", "Project Management"],
+    },
 }
+
+HERMES_MAX_DESCRIPTION = 60
 
 AUTHOR = "richardkfm/vibes"
 LICENSE = "MIT"
@@ -60,15 +86,34 @@ def flow_list(items: list[str]) -> str:
     return "[" + ", ".join(items) + "]"
 
 
+def with_when_to_use(body: str, source_description: str) -> str:
+    """Insert a "When to Use" section before the first second-level heading."""
+    if re.search(r"^## When to Use\s*$", body, re.M | re.I):
+        return body
+    start = source_description.find("Use when")
+    triggers = source_description[start:] if start != -1 else source_description
+    section = f"## When to Use\n\n{triggers.strip()}\n\n"
+    first_h2 = re.search(r"^## ", body, re.M)
+    if first_h2 is None:
+        return body.rstrip("\n") + "\n\n" + section.rstrip("\n") + "\n"
+    return body[: first_h2.start()] + section + body[first_h2.start() :]
+
+
 def render_skill_md(name: str, config: dict, known: set[str]) -> str:
     source = CLAUDE_DIR / name / "SKILL.md"
     meta, body = split_frontmatter(source.read_text(encoding="utf-8"))
     version = str((meta.get("metadata") or {}).get("version", DEFAULT_VERSION))
+    description = config["description"]
+    if len(description) > HERMES_MAX_DESCRIPTION or not description.endswith("."):
+        raise SystemExit(
+            f"MIRRORS['{name}'] description must be at most {HERMES_MAX_DESCRIPTION} characters"
+            f" and end with a period (it is {len(description)})"
+        )
     lines = [
         "---",
         f"name: {meta['name']}",
         # A JSON string is a valid YAML double-quoted scalar; this keeps colons and quotes safe.
-        f"description: {json.dumps(meta['description'], ensure_ascii=False)}",
+        f"description: {json.dumps(description, ensure_ascii=False)}",
         f"version: {version}",
         f"author: {AUTHOR}",
         f"license: {LICENSE}",
@@ -86,7 +131,7 @@ def render_skill_md(name: str, config: dict, known: set[str]) -> str:
         " Edit the source and re-run the script. -->",
         "",
     ]
-    return "\n".join(lines) + body
+    return "\n".join(lines) + with_when_to_use(body, meta["description"])
 
 
 def expected_files(known: set[str]) -> dict[Path, bytes]:

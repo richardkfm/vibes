@@ -28,12 +28,20 @@ README = ROOT / "README.md"
 # which rejects any other key, so nothing harness-specific is allowed there.
 SPEC_KEYS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
 # Hermes reads the same fields plus a few of its own.
-HERMES_KEYS = SPEC_KEYS | {"version", "author", "platforms", "prerequisites"}
+HERMES_KEYS = SPEC_KEYS | {
+    "version",
+    "author",
+    "platforms",
+    "required_environment_variables",
+    "required_credential_files",
+}
 
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 RESERVED_WORDS = ("claude", "anthropic")
 MAX_NAME = 64
 MAX_DESCRIPTION = 1024
+# The Hermes skill index shows only the first 60 characters of a description.
+HERMES_MAX_DESCRIPTION = 60
 MAX_COMPATIBILITY = 500
 MAX_LINES = 500
 
@@ -145,6 +153,17 @@ def check_skill(path: Path, allowed: set[str], known: set[str], strict: bool) ->
     check_links(path, body)
 
     if not strict:
+        # Hermes layout: a description that fits the skill index, and the
+        # section Hermes's own skill linter looks for.
+        description = meta.get("description")
+        if isinstance(description, str) and len(description) > HERMES_MAX_DESCRIPTION:
+            fail(
+                path,
+                f"Hermes description is {len(description)} characters; the skill index"
+                f" shows only the first {HERMES_MAX_DESCRIPTION}",
+            )
+        if not re.search(r"^## When to Use\s*$", body, re.M | re.I):
+            fail(path, "Hermes skill needs a '## When to Use' section")
         return
 
     # Spec metadata is a flat string-to-string map.
