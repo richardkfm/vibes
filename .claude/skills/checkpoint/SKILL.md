@@ -1,6 +1,6 @@
 ---
 name: checkpoint
-description: Maintain a compact running state file during long autonomous tasks so context compaction stays cheap and nothing is lost when the window fills up. Use when the user invokes /checkpoint, kicks off a long unattended run, or asks the agent to make long sessions survive context limits.
+description: Maintains a compact running state file during long autonomous tasks (plan, hard-won facts, decisions, gotchas) so context compaction stays cheap and nothing is lost when the window fills up. Use when the user invokes /checkpoint, kicks off a long or unattended run, asks the agent to make long sessions survive context limits or to pick up where it left off, or when a task has more steps than one context window will hold. Also use right after a compaction or restart of a task that keeps such a file, reading it before anything else.
 ---
 
 # Checkpoint
@@ -12,10 +12,19 @@ session. A small, disciplined state file makes compaction nearly free.
 
 ## The state file
 
-At the start of a long task, create a state file in a scratchpad or temp
-directory (never commit it). Common names: `NOTES.md`, `.task-state.md`,
-`/tmp/task-state.md`. Keep it under ~60 lines, overwriting stale content
-rather than appending a journal. Structure:
+At the start of a long task, create `task-state.md` in the session's
+scratchpad or temp directory (for example `/tmp/task-state.md`), where it
+can't be committed by accident. Use that one name every time: after a
+compaction, the path is the only thing you need to remember. If the temp
+directory doesn't survive a restart of the environment, keep the file at
+the repo root as `.task-state.md` instead and hide it from git:
+
+```bash
+echo .task-state.md >> "$(git rev-parse --git-path info/exclude)"
+```
+
+Keep it under ~60 lines, overwriting stale content rather than appending a
+journal. Structure:
 
 ```markdown
 # Task
@@ -118,12 +127,15 @@ the single biggest token sink in long sessions. Sixty curated lines read
 once per resume replace thousands of lines of re-read source — and double
 as the skeleton of the final summary the user gets.
 
-## Combining with other skills
+## Related skills
 
-- **radical-compression**: use the state file as the destination for your
+- `radical-compression`: use the state file as the destination for your
   compressed cycle summaries. The checkpoint file accumulates the durable
   residue across cycles.
-- **frugal-context**: store file:line references in the state file so
+- `frugal-context`: store file:line references in the state file so
   you can resume exactly where you left off without grepping again.
-- **silent-mode**: update the state file silently — it's an internal
-  artifact, not user-facing narration.
+- `lean-output`: the quiet build and test commands that work for this
+  project belong under `# Key facts`.
+- `silent-mode`: update the state file silently — it's an internal
+  artifact, not user-facing narration. Its `# Decisions made` and
+  `# Files touched` sections feed the final summary directly.

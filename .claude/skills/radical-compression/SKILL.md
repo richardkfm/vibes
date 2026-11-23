@@ -1,6 +1,6 @@
 ---
 name: radical-compression
-description: Radically compress working state after each completed cycle of work — distill what the cycle proved into a few lines, discard everything else, and carry only the compressed residue forward. Use when the user invokes /radical-compression, asks to keep the session tight, or at the start of long multi-cycle tasks (debug loops, migrations, PR babysitting) that would otherwise bloat the context window.
+description: Radically compresses working state after each completed cycle of work. Distills what the cycle proved into three to five lines (verdict, hard-won facts, next step), discards everything else, and carries only that residue forward. Use when the user invokes /radical-compression, asks to keep the session tight or lean, or at the start of long multi-cycle tasks (debug loops, migrations, review rounds, PR and CI babysitting) that would otherwise bloat the context window. Also use when a long session is visibly filling up with logs, failed attempts and dead ends.
 ---
 
 # Radical Compression
@@ -33,7 +33,11 @@ At each boundary, distill the entire cycle into at most 3–5 lines:
 
 Write it into your running state file if you keep one (see `checkpoint`),
 *replacing* the previous cycle's working notes rather than appending to
-them. Everything else from the cycle — the paths not taken, the logs, the
+them. In `checkpoint`'s layout, the verdict ticks off the current step
+under `# Plan`, *Next* becomes the step marked CURRENT, and residue goes
+under `# Key facts` or `# Gotchas encountered`.
+
+Everything else from the cycle — the paths not taken, the logs, the
 intermediate diffs, the three wrong hypotheses — is deliberately dropped.
 If it mattered, it's in the verdict; if it's not in the verdict, stop
 referring back to it.
@@ -46,9 +50,10 @@ referring back to it.
   already booked.
 
 - **Replace, don't append.** A state file that grows one section per cycle
-  is a journal, not a compression. Overwrite the working-notes section
-  each cycle; only durable facts (commands, decisions, `file:line` proofs)
-  accumulate — and prune even those when they stop being load-bearing.
+  is a journal, not a compression. Overwrite the last cycle's verdict and
+  next step each cycle; only durable facts (commands, decisions,
+  `file:line` proofs) accumulate — and prune even those when they stop
+  being load-bearing.
 
 - **Dead ends compress to one line or zero.** "Not the config loader —
   ruled out" is worth keeping only if you're otherwise likely to re-check
@@ -72,8 +77,8 @@ referring back to it.
 
 **Before (raw context after a debugging cycle):**
 ```
-- Read src/auth/login.ts (180 lines)
-- Read src/auth/middleware.ts (95 lines)
+- Read src/auth/login.py (180 lines)
+- Read src/auth/middleware.py (95 lines)
 - Grep for "token" found 14 matches across 6 files
 - Ran pytest tests/test_auth.py - 3 passed, 1 failed: test_refresh_token
 - Error: "TokenExpiredError at src/auth/refresh.py:23"
@@ -103,12 +108,12 @@ fresh) and radical everywhere else. Twenty cycles at five lines each is a
 hundred lines of perfect recall; twenty uncompressed cycles is a full
 context window and a lossy squash you don't control.
 
-## Combining with other skills
+## Related skills
 
-- **checkpoint**: the state file is where you store compressed cycles.
+- `checkpoint`: the state file is where you store compressed cycles.
   Checkpoint gives the file structure; compression fills it with distilled
   content.
-- **lean-output**: compressed cycles reference log files by path, so
+- `lean-output`: compressed cycles reference log files by path, so
   lean-output's file-redirect patterns and grep strategies pair naturally.
-- **silent-mode**: compress silently — the compression is internal housekeeping,
+- `silent-mode`: compress silently — the compression is internal housekeeping,
   not user-facing narration.
