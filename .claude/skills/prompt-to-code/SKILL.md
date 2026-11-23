@@ -1,6 +1,6 @@
 ---
 name: prompt-to-code
-description: Transform a system prompt (agent instructions, persona, GPT/assistant config) into working code — a runnable app or agent where deterministic rules become real code and only genuine judgment stays in the prompt. Use whenever the user has a system prompt, custom GPT, assistant config, or a long block of LLM instructions and wants to "turn it into code," build an app/agent/bot from it, productionize it, make it reliable, or asks why their giant prompt keeps getting ignored — even if they don't use the word "code."
+description: Turns a system prompt (agent instructions, persona, custom GPT or assistant config) into working code, a runnable app or agent where deterministic rules become schemas, tools, validators and orchestration and only genuine judgment stays in a much smaller prompt. Use when the user invokes /prompt-to-code, has a system prompt, custom GPT, assistant config or long block of LLM instructions and wants to "turn it into code", build an app, agent or bot from it, productionize it or make it reliable, or asks why their giant prompt keeps getting ignored or behaves inconsistently, even if they never use the word "code".
 ---
 
 # Prompt to Code
@@ -64,8 +64,11 @@ instructions across stages.
 
 Default stack unless the user says otherwise: **Python + the Anthropic
 SDK** (or the Claude Agent SDK for tool-heavy agents; TypeScript if the
-project is already TS). Load the `claude-api` skill if available for
-current model IDs and API patterns. Structure:
+project is already TS). If the prompt already runs on another provider and
+the user wants to stay there, use that provider's SDK; the structure below
+is the same. Take model IDs and API patterns from current documentation
+(or an API reference skill such as `claude-api`, if one is installed), not
+from memory, because they change. Structure:
 
 ```
 project/
@@ -125,3 +128,10 @@ Not every request wants the full pipeline. Match the ceremony to the ask:
   almost always these), with a migration recommendation — before writing
   any code. Rules stated in prompts compete for attention; rules in code
   don't compete at all.
+
+## Related skills
+
+- `github-actions`: Step 4's tests only pay off when they run on every
+  change; hand the CI workflow to that skill.
+- `web-ux-design`: when the migrated app gets a web UI, run its audit pass
+  over the interface.

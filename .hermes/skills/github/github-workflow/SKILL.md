@@ -1,140 +1,146 @@
 ---
 name: github-workflow
-description: Authenticate with GitHub (fine-grained PAT workaround), create draft PRs, and avoid user-guides as agent skills.
-version: 1.0.0
+description: "Use before any PR, push, clone or gh auth. Draft PRs only."
+version: 1.1.0
 author: Hermes Agent
 license: MIT
 metadata:
   hermes:
     tags: [GitHub, Authentication, PAT, Draft, PR, Workflow]
-    related_skills: [github-auth, github-pr-workflow]
+    related_skills: [github, github-repo-finder, github-docs]
 ---
 
 # GitHub Workflow
 
-Extends the bundled `github-auth` and `github-pr-workflow` skills with user-specific conventions and discovered workarounds.
+The user's conventions for GitHub work, on top of the bundled `github` skill (`github-auth` and `github-pr-workflow` on older installs), which covers the mechanics. Three things are fixed here: settle the repository before anything else, open pull requests as drafts and never merge without an explicit instruction, and authenticate `gh` with a personal access token without leaving that token in chat or in `~/.git-credentials`.
+
+## When to Use
+
+- The request touches GitHub in any way: pull requests, commits, pushes, clones, branches, issues.
+- A pull request is about to be created, updated or merged.
+- `gh auth status` fails, or `gh auth login --with-token` rejects a token with `missing required scope 'read:org'`.
+
+## Prerequisites
+
+`git` and `gh` on the PATH. Run every command below through the `terminal` tool.
 
 ## Target Repository Selection (run first)
 
-**Before any other GitHub work, determine which repository to operate on.** Unlike Claude Code (which has a project directory pinned at session start), Hermes sessions have no default repo — the user may have multiple repos cloned locally or on GitHub.
+Decide which repository to work in before any other GitHub step. A Hermes session has no project directory pinned at start and the user may have several repos, locally or on GitHub, so a guess can put commits or a pull request in the wrong one.
 
-### Trigger
+1. **Look for a repo in the user's message**: an explicit name ("in my project-x repo", "on the vibes repo"), a URL (`github.com/user/repo`), or a project reference that maps to exactly one repo. If it is there, note it and go to step 3.
 
-Run this check at the beginning of a session whenever the user's request involves GitHub operations (PRs, commits, clones, branches, issues, etc.).
-
-### Procedure
-
-1. **Check if the user already specified a repo** — scan the user's initial message for:
-   - An explicit repo name (`"in my project-x repo"`, `"on the vibes repo"`)
-   - A full URL (`github.com/user/repo`)
-   - A clear project reference that maps to one repo
-
-2. **If clearly stated:** note the repo and proceed to the next section.
-
-3. **If ambiguous or missing:** use `clarify` to ask:
-   ```
-   clarify(question="Which repository should I work in?", choices=[list of known repos])
-   ```
-   To build the choices, discover repos:
+2. **Otherwise ask.** Collect the candidates:
    ```bash
-   # Check locally cloned repos under common paths
-   find ~ -maxdepth 3 -name ".git" -type d 2>/dev/null | while read gitdir; do
-     cd "$gitdir/.." 2>/dev/null && git remote get-url origin 2>/dev/null
+   # repos cloned under the home directory
+   find ~ -maxdepth 3 -name .git -type d 2>/dev/null | while read -r gitdir; do
+     git -C "${gitdir%/.git}" remote get-url origin 2>/dev/null
    done | sort -u
 
-   # OR list repos via GitHub API (if gh is authed)
-   gh repo list --limit 20 2>/dev/null || echo "gh not available"
+   # or the user's repos on GitHub, when gh is authenticated
+   gh repo list --limit 20
    ```
-   Present the most relevant options (recently worked-on repos, or ones matching the task). If only 1 repo exists, default to it and confirm briefly.
+   Then ask with `clarify`: the question "Which repository should I work in?" with up to four choices, most likely first (recently worked on, or matching the task). The tool adds a free-text row for anything else. If only one repo exists, default to it and confirm in one line.
 
-### After selection
+3. **Work inside the selected repo**, cloning it first if it is not on disk:
+   ```bash
+   gh repo clone owner/repo        # only when not cloned yet; or: git clone https://github.com/owner/repo.git
+   cd /path/to/selected/repo
+   git fetch origin
+   ```
 
-Record the choice and work inside that repository:
-```bash
-cd /path/to/selected/repo
-git fetch origin
-```
+Examples:
 
-If the repo isn't cloned locally yet, clone it first:
-```bash
-gh repo clone owner/repo  # or: git clone https://github.com/owner/repo.git
-```
-
-### Example
-
-- User says: "can you make a PR to fix that auth bug?"
-  → No repo specified → `clarify("Which repository should I work in?", choices=["vibes", "project-x", "api-server"])`
-- User says: "open a PR in vibes to update the README"
-  → Repo is clear → proceed to authentication and work in the `vibes` repo
+- "can you make a PR to fix that auth bug?" names no repo, so ask: `clarify` with the choices `vibes`, `project-x`, `api-server`.
+- "open a PR in vibes to update the README" names the repo, so go straight to work in `vibes`.
 
 ## Create Draft PRs Only
 
-**ALWAYS create PRs as drafts — never merge without explicit instruction.** Richard prefers to review PRs himself before merging. This prevents accidental merges and gives the user full control.
+Open every pull request as a draft, and do not merge one unless the user explicitly tells you to merge that pull request. The user reviews pull requests themselves before anything merges; a draft cannot be merged by accident and keeps that decision with them.
 
-### Creating a Draft PR
-
-**With gh:**
 ```bash
-gh pr create \
-  --draft \
-  --title "feat: description of changes" \
-  --body "## Summary\nDescription of changes.\n"
+gh pr create --draft --title "feat: <what changed>" --body-file pr-body.md
 ```
 
-**Via API (curl):**
-```bash
-curl -s -X POST \
-  -H "Authorization: token $GITHUB_TOKEN" \
-  -H "Content-Type: application/json" \
-  https://api.github.com/repos/$OWNER/$REPO/pulls \
-  -d "{\"title\":\"feat: description\",\"body\":\"...\",\"head\":\"$BRANCH\",\"base\":\"main\",\"draft\":true}"
-```
+Write the body to a file with `write_file` first (the `github-docs` skill, if installed, says what belongs in it). An inline `--body "## Summary\n..."` posts the `\n` literally, because the shell does not expand it inside double quotes.
 
-### After creating the draft PR
+Without `gh`, create the pull request through the REST API (`POST /repos/{owner}/{repo}/pulls`) with `"draft": true` in the JSON body, and use the repository's default branch as `base` instead of assuming `main`.
 
-Tell the user:
-- PR number and URL
-- That it's a draft and ready for their review
-- They can merge it when satisfied
+After creating it, tell the user:
 
-Do **not** call `gh pr merge` or the merge API under any circumstances unless the user explicitly says "merge this PR myself" — even then, prefer to let them do it.
+- the PR number and URL
+- that it is a draft, waiting for their review
+- that they can mark it ready and merge it when satisfied
+
+Never run `gh pr merge` (with or without `--auto`), call the merge API, or take the pull request out of draft with `gh pr ready` unless the user explicitly asks for that on this pull request. Even with permission to merge, offer to leave the merge to them.
 
 ## Authentication with Fine-Grained PATs
 
-Fine-grained PATs (`github_pat_...`) fail with `missing required scope 'read:org'`. Workaround:
+Only needed when `gh auth status` fails. If it reports a logged-in account, skip this section.
 
-```bash
-# Write token directly to gh config
-python3 -c "
-import pathlib
-hosts = pathlib.Path('$HOME/.config/gh/hosts.yml')
-# Backup
-pathlib.Path('$HOME/.config/gh/hosts.yml.bak').write_text(hosts.read_text())
-hosts.write_text(f'''github.com:
-    users:
-        <USER>:
-            oauth_token: <TOKEN>
-    git_protocol: https
-    oauth_token: <TOKEN>
-    user: <USER>
-''')
-"
+`gh auth login --with-token` checks a token for the classic scopes `repo` and `read:org` and can reject a personal access token with `error validating token: missing required scope 'read:org'`. A fine-grained PAT (`github_pat_...`) has no classic scopes to add, so when that happens the token has to reach `gh` another way. Whether the check fires depends on the token and the `gh` version, so try the normal login before the fallback. In both cases keep the token out of chat, off command lines and out of `~/.git-credentials`.
 
-# Also set env var as fallback
-export GH_TOKEN="<TOKEN>"
+1. **Have the user put the token in a file, not in chat.** A token pasted into chat stays in the session log and reaches the model provider. Ask them to run this in their own shell on this machine, paste the token, press Enter, then Ctrl-D:
+   ```bash
+   (umask 077; cat > ~/.gh-pat)
+   ```
+   Never print that file or the token. If the user pastes the token into chat anyway, save it to `~/.gh-pat` with `write_file`, restrict that file to mode 600, do not repeat the token in any reply, and mention that it now sits in the session history in case they want to rotate it.
 
-# Store for git credential helper
-echo "https://<USER>:<TOKEN>@github.com" > ~/.git-credentials
+2. **Try the supported login first**, because it stores the token in the operating system's keyring when there is one:
+   ```bash
+   gh auth login --with-token < ~/.gh-pat
+   ```
+   If it succeeds, go to step 4. A `401` or `Bad credentials` means the token is wrong or expired; ask for a new one instead of continuing.
 
-gh auth status
-```
+3. **On the scope error, write the file `gh` itself falls back to** when no keyring exists. Replace `GITHUB_LOGIN` with the user's GitHub login; ask for it if unknown.
+   ```bash
+   python3 - GITHUB_LOGIN <<'PY'
+   import os, pathlib, re, sys
+   home = pathlib.Path.home()
+   token = (home / ".gh-pat").read_text().strip()
+   user = sys.argv[1]
+   cfg = os.getenv("GH_CONFIG_DIR") or pathlib.Path(os.getenv("XDG_CONFIG_HOME") or home / ".config") / "gh"
+   hosts = pathlib.Path(cfg) / "hosts.yml"
+   hosts.parent.mkdir(parents=True, exist_ok=True)
+   old = hosts.read_text() if hosts.exists() else ""
+   # keep entries for other hosts, replace a stale github.com entry
+   kept = re.sub(r"(?m)^github\.com:\n(?:[ \t].*\n?)*", "", old).strip("\n")
+   hosts.touch(mode=0o600)
+   hosts.chmod(0o600)
+   hosts.write_text((kept + "\n" if kept else "") +
+       f"github.com:\n    users:\n        {user}:\n            oauth_token: {token}\n"
+       f"    git_protocol: https\n    oauth_token: {token}\n    user: {user}\n")
+   PY
+   ```
 
-## What Makes an Agent Skill (vs. User Guide)
+4. **Let git use gh's credential, then remove the temporary file:**
+   ```bash
+   gh auth setup-git     # adds credential-helper lines to ~/.gitconfig; no token is written
+   rm -f ~/.gh-pat
+   gh auth status        # names the account and where its token is stored
+   ```
 
-A Hermes skill must be **procedural** — it tells the agent *what to do* in numbered steps with checkable completion criteria. It is NOT valid as a Hermes skill if it is:
-- A user-facing installation tutorial
-- A CLI flag reference (e.g. `llama-server --ctx-size`)
-- Empty Python class stubs with no working code
-- A "how to set up X on your hardware" guide
+5. **Tell the user where the token now lives**, as `gh auth status` reports it:
 
-**Valid agent skills** have: trigger conditions, procedural steps, tool commands, pitfalls, and verification. See `hermes-agent-skill-authoring` for the full spec.
+   | `gh auth status` shows | The token is stored in |
+   |---|---|
+   | `(keyring)` | the operating system's credential store |
+   | a path ending in `hosts.yml` | that file, in plaintext. Mode 600 keeps other accounts out; anything running as the user, this agent included, can read it. |
+
+   Nothing else holds it. `gh auth setup-git` makes git ask `gh` for the credential on every fetch and push, so `~/.git-credentials`, remote URLs and shell profiles stay free of tokens.
+
+## Pitfalls
+
+- **A token exported in Hermes's own environment may not reach `gh`.** Hermes can strip GitHub tokens from the environment of `terminal` commands, so trust `gh auth status`, not the presence of `GH_TOKEN` elsewhere.
+- **`GH_TOKEN` or `GITHUB_TOKEN` set inside the shell overrides stored credentials**, and `gh auth login` refuses to store a token while one is set. If `gh auth status` passes that way, there is nothing to set up.
+- **A fine-grained PAT only reaches the repositories and permissions picked when it was created.** A 403 or 404 such as `Resource not accessible by personal access token` on a repo the user can open in the browser is the token's reach, not a login failure. Ask the user to grant that repository (pull requests need read and write on Contents and on Pull requests) instead of authenticating again.
+- **An SSH remote ignores all of this.** If `git remote get-url origin` starts with `git@`, pushes use SSH keys, not the token.
+- **Step 2 hanging with no output** happens on headless Linux hosts without a keyring. Interrupt it and continue with step 3.
+- **Old plaintext copies outlive a new login.** A `https://user:token@github.com` line in `~/.git-credentials`, or a `hosts.yml.bak` next to `hosts.yml`, keeps a token readable. Point it out and offer to remove it once `gh auth status` passes.
+- **The paths here are for Linux and macOS.** On Windows `gh` uses the Windows credential manager, so step 2 is normally enough.
+
+## Verification
+
+- `git remote get-url origin` in the working directory names the repository the user chose.
+- `gh auth status` exits 0 and names the account.
+- `gh pr view --json number,url,isDraft,state` shows `"isDraft": true` and `"state": "OPEN"` for the pull request just created.

@@ -1,6 +1,6 @@
 ---
 name: humanize-language
-description: Rewrite text so it reads like a person wrote it — strip AI tells, formulaic structure, hedging, and marketing sheen while keeping the meaning intact. Use whenever the user asks to humanize, naturalize, de-AI, or "make this sound less like ChatGPT," asks why their text sounds robotic or generic, or wants any draft (email, blog post, docs, README, LinkedIn post, cover letter) to sound more natural, warmer, or more like them. Also apply it to your own writing when the user asks for prose a human will actually read.
+description: Rewrites text so it reads like a person wrote it, stripping AI tells, formulaic structure, hedging and marketing sheen while keeping the meaning intact. Use when the user invokes /humanize-language, asks to humanize, naturalize or de-AI a text or to "make this sound less like ChatGPT", asks why their writing sounds robotic, generic or AI-generated, or wants any draft (email, blog post, docs, README, PR description, LinkedIn post, cover letter) to sound more natural, warmer or more like them. Also use on the agent's own prose whenever the user asks for writing that people will actually read.
 ---
 
 # Humanize Language
@@ -124,3 +124,14 @@ headers is normal there.
 
 (The "after" assumes a real detail from the user. Without one, ask —
 that's the difference between humanized and merely de-AI'd.)
+
+## Related skills
+
+- `github-docs`: it decides what a README or PR description has to cover
+  and how deep; run the finished text through this skill afterwards, and
+  keep every fact, command and section it required.
+- `linear-issues`: issue comments follow that skill's fixed format (plain
+  language in straight double quotation marks, then an `— agent` line).
+  Humanize the wording inside the quotes and leave the marks and the tag
+  untouched: the goal here is natural prose, not hiding that an agent
+  wrote it.
