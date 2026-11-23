@@ -46,6 +46,7 @@
       font-size: 32px;
       fill: var(--ink-2);
     }
+    .sub .lead { fill: var(--ink); }
     .raw { fill: var(--raw); }
     .red { fill: var(--red); }
     .orange { fill: var(--orange); }
@@ -137,18 +138,18 @@
   <rect class="panel" x="0.5" y="0.5" width="1199" height="299" rx="20"/>
 
   <!-- Wordmark, drawn as round-capped strokes so it looks the same on every platform. -->
-  <g class="wordmark" transform="translate(72 149) scale(0.74)">
+  <g class="wordmark" transform="translate(72 147) scale(0.74)">
     <path d="M0 -84 L36 0 L72 -84"/>
-    <path d="M118 -84 V0"/>
-    <circle class="dot" cx="118" cy="-126" r="13"/>
-    <path d="M164 -136 V0"/>
-    <circle cx="206" cy="-42" r="42"/>
-    <path d="M294 -42 H378 A42 42 0 1 0 365.7 -12.3"/>
-    <path d="M469.9 -76.5 A26 21 0 1 0 450 -42 A26 21 0 1 1 430.1 -7.5"/>
+    <path d="M110 -84 V0"/>
+    <circle class="dot" cx="110" cy="-126" r="13"/>
+    <path d="M156 -136 V0"/>
+    <circle cx="198" cy="-42" r="42"/>
+    <path d="M286 -42 H370 A42 42 0 1 0 357.7 -12.3"/>
+    <path d="M455.9 -76.5 A26 21 0 1 0 436 -42 A26 21 0 1 1 416.1 -7.5"/>
   </g>
 
-  <text class="sub" x="64" y="212">
-    <tspan x="64">Skills for coding agents:</tspan>
+  <text class="sub" x="64" y="213">
+    <tspan class="lead" x="64">Skills for coding agents:</tspan>
     <tspan x="64" dy="40">lean context, quiet sessions, careful shipping.</tspan>
   </text>
 

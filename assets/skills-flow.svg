@@ -116,7 +116,7 @@
     <!-- The work loop, drawn clockwise from the middle of its bottom edge. -->
     <path id="flow-loop" pathLength="100" d="M743 401 H608 A24 24 0 0 1 584 377 V215 A24 24 0 0 1 608 191 H878 A24 24 0 0 1 902 215 V377 A24 24 0 0 1 878 401 Z"/>
     <clipPath id="flow-chart">
-      <rect x="668" y="268" width="216" height="76"/>
+      <rect x="668" y="268" width="204" height="76"/>
     </clipPath>
   </defs>
 
@@ -179,12 +179,12 @@
 
   <!-- Context used over time: fills during a cycle, drops when it is compressed. -->
   <text class="gloss" x="668" y="252">context window</text>
-  <path class="limit" d="M668 262 H884"/>
-  <path class="floor" d="M668 348 H884"/>
+  <path class="limit" d="M668 262 H872"/>
+  <path class="floor" d="M668 348 H872"/>
   <g clip-path="url(#flow-chart)">
-    <polyline class="saw" points="622,340 684,278 694,340 756,278 766,340 828,278 838,340 900,278 910,340 972,278 982,340"/>
+    <polyline class="saw" points="610,340 672,278 682,340 744,278 754,340 816,278 826,340 888,278 898,340 960,278 970,340"/>
   </g>
-  <circle class="now" cx="884" cy="294" r="5.5"/>
+  <circle class="now" cx="872" cy="294" r="5.5"/>
 
   <!-- Stage 4: shipping. -->
   <rect class="card" x="940" y="162" width="216" height="58" rx="8"/>
