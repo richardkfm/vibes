@@ -52,29 +52,26 @@ jobs:
           gh release create "$TAG" "${flags[@]}" dist/*
 ```
 
-Resolve both placeholders the way `github-actions` describes; do not copy a
-SHA or version from memory. `gh` is preinstalled on GitHub-hosted runners
-and reads its token from `GH_TOKEN`.
+Resolve both placeholders the way `github-actions` describes; do not copy a SHA
+or version from memory. `gh` is preinstalled on GitHub-hosted runners and reads
+its token from `GH_TOKEN`.
 
 ## The choices behind it
 
-- **Version-shaped tag patterns, not `v*`**, so a tag such as
-  `vendor-import` starts nothing.
-- **Draft by default.** The workflow attaches assets and generated notes.
-  Then a person, or the agent once it has the go-ahead, puts the written
-  notes in place and publishes: `gh release edit <tag> --notes-file notes.md
-  --draft=false`. Watchers are notified with the final notes, not the raw
-  list. Drop `--draft` for hands-off publishing and edit the notes
-  afterwards. With immutable releases enabled, draft, upload, publish is the
-  only order that works, because assets cannot change once published.
-- **Write access on one job only.** The workflow default is `contents:
-  read`; build and test jobs added later stay read-only.
+- **Version-shaped tag patterns**, so a tag like `vendor-import` starts nothing.
+- **Draft by default.** The workflow attaches assets and generated notes. A
+  person, or the agent once it has the go-ahead, then puts the written notes in
+  place and publishes with `gh release edit <tag> --notes-file notes.md
+  --draft=false`, so watchers are notified with the final notes. Drop `--draft`
+  for hands-off publishing, but keep it where immutable releases are enabled:
+  assets cannot change once a release is published.
+- **Write access on one job only.** The workflow default is `contents: read`;
+  build and test jobs added later stay read-only.
 - **Tag name through `env`.** Ref names may contain shell metacharacters, so
   `${{ github.ref_name }}` never goes straight into the script.
-- **Ancestry check.** A tag can be pushed on any commit. This refuses one
-  that never reached the default branch, such as an unmerged feature branch.
-- **`cancel-in-progress: false`.** A half-finished release is worse than a
-  queued one.
+- **Ancestry check.** A tag can be pushed on any commit. This refuses one that
+  never reached the default branch, such as an unmerged feature branch.
+- **`cancel-in-progress: false`**, so a release is never cut off halfway.
 
 ## Worth adding when relevant
 
@@ -86,21 +83,18 @@ and reads its token from `GH_TOKEN`.
   cannot ship.
 - **Package publishing** in a separate job that `needs:` the build, with its
   own minimal permissions, a protected `environment`, and OIDC trusted
-  publishing (`id-token: write`) where the registry supports it, in place of
-  a stored token.
+  publishing (`id-token: write`) in place of a stored token.
 
 ## Gotchas
 
 - **Events caused by `GITHUB_TOKEN` start no other workflows.** A release
-  created here will not fire workflows listening on `release: published`,
-  and a tag pushed from a workflow will not fire this one. Chain the steps
-  as jobs in one workflow or call a reusable workflow.
+  created here fires nothing that listens on `release: published`, and a tag
+  pushed from a workflow does not fire this one. Chain the steps as jobs.
 - **The first real tag is a bad moment to find a typo.** Before merging, run
-  the build and guard steps on the PR through a temporary `pull_request`
-  trigger, with the release step guarded by `if: github.ref_type == 'tag'`,
-  then remove the trigger. If the user agrees, make the first tagged run a
-  pre-release (`v0.1.0-rc.1`) to exercise publishing at low stakes.
-- **Re-running does not pick up a fix.** A tag-triggered run uses the
-  workflow file from the tagged commit, so after fixing the workflow on the
-  default branch a re-run repeats the failure. Cut the next patch version
-  rather than moving the tag.
+  the build steps on the PR through a temporary `pull_request` trigger (removed
+  again before merge), with the tag-only steps guarded by
+  `if: github.ref_type == 'tag'`. If the user agrees, make the first tagged run
+  a pre-release (`v0.1.0-rc.1`).
+- **Re-running does not pick up a fix.** A tag-triggered run uses the workflow
+  file from the tagged commit, so a re-run repeats the failure. Fix the
+  workflow, then cut the next patch version rather than move the tag.
