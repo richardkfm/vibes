@@ -20,9 +20,9 @@ listings and greps. Fall back to live exploration only for areas the map
 doesn't cover — and add what you learn to the map afterwards.
 
 Trust but verify freshness: the map header records the commit it was built
-at. If `git rev-list --count <that-sha>..HEAD -- <dir>` shows heavy churn
-in the area you care about, re-check that area live. Do the same if git
-doesn't know the sha (shallow clone, rewritten history).
+at. If `git rev-list --count <that-sha>..HEAD -- <dir>` reports more than
+a handful of commits in the area you care about, re-check that area live.
+Do the same if git doesn't know the sha (shallow clone, rewritten history).
 
 ## Building the map
 
@@ -82,9 +82,10 @@ deep for the map.
 
 - Commit the map with whatever change prompted the update; update the
   header sha (`git rev-parse --short HEAD`). Don't rebuild wholesale unless
-  the structure really shifted. If the repo isn't the user's to add files
-  to (an upstream project, a team that keeps tooling files out), keep the
-  map local instead:
+  the structure really shifted.
+
+- If the repo isn't the user's to add files to (an upstream project, a team
+  that keeps tooling files out of the tree), keep the map untracked instead:
   `echo .repo-map.md >> "$(git rev-parse --git-path info/exclude)"`.
 
 - Never let it grow into documentation. It's an index; prune as you add.

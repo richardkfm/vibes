@@ -34,8 +34,9 @@ At each boundary, distill the entire cycle into at most 3–5 lines:
 Write it into your running state file if you keep one (see `checkpoint`),
 *replacing* the previous cycle's working notes rather than appending to
 them. In `checkpoint`'s layout, the verdict ticks off the current step
-under `# Plan`, *Next* becomes the step marked CURRENT, and residue goes
-under `# Key facts` or `# Gotchas encountered`.
+under `# Plan` (or rewrites it, if the cycle killed the approach), *Next*
+becomes the step marked CURRENT, and residue goes under `# Key facts` or
+`# Gotchas encountered`.
 
 Everything else from the cycle — the paths not taken, the logs, the
 intermediate diffs, the three wrong hypotheses — is deliberately dropped.
